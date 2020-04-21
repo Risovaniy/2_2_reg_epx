@@ -5,14 +5,18 @@ import re
 
 
 def phone(line):
-    phone_pattern = "(\+7|8|7)*(\s*)(\(\d+\))(\s*)(\d+)(-+|\s)(\d+)(-+|\s)(\d+)(-+|\s*)(\d{2,5})"
-    result = re.sub(phone_pattern, r"+7\3\5-\7-\9 доб.\11", line[5])
+    phone_pattern = "(\+7|8|7*)+(\s*)(\(\d{3}\))(\s*)(\d{3})(-+|\s*)(\d{2})(-+|\s*)(\d{2})"
+    result = re.sub(phone_pattern, r"+7\3\5-\7-\9", line[5])
     line[5] = result
+    if len(line[5]) > 16:
+        phone_pattern = "(\+7\(\d{3}\)\d{3}-\d{2}-\d{2})(-+|\s*|\s*доб\.|доб)(\d+)"
+        result = re.sub(phone_pattern, r"\1 доб.\3", line[5])
+        line[5] = result
 
 
 def names(line):
     if len(line[0]) != 0 and len(line[1]) != 0 and len(line[2]) != 0:
-        print(f'Contact 0 {line[0]} 1 {line[1]} 2 {line[2]} is ok')
+        print(f'Contact {line[0]} {line[1]} {line[2]} is ok')
     elif len(line[1]) == 0 and len(line[2]) == 0:
         result = re.split(r'[;,\s]+', line[0])
         line[0] = result[0]
@@ -36,13 +40,10 @@ def names(line):
 
 def check_information(line):
     cell_without_info = list()
-    print(f'3 {line[3]} 4 {line[4]} 5 {line[5]} 6 {line[6]}')
     if len(line[3]) == 0:
         cell_without_info.append(3)
     if len(line[4]) == 0:
         cell_without_info.append(4)
-    if len(line[5]) == 0:
-        cell_without_info.append(5)
     if len(line[6]) == 0:
         cell_without_info.append(6)
     return cell_without_info
